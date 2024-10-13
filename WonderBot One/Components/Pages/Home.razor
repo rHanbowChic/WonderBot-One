@@ -1,0 +1,46 @@
+﻿@page "/"
+
+<div class="container mt-3 chat-box">
+    @foreach (var bubble in bubbles)
+    {
+        <div class="chat-bubble @(bubble.received ? "bubble-left" : "bubble-right")">@bubble.text</div>
+    }
+    
+</div>
+<div class="bottom-dialog">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="输入消息..." @bind="input">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" @onclick="SendMessage">发送</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    string input;
+    List<Bubble> bubbles = new List<Bubble>();
+    Env e = new Env();
+    Random rd = new Random();
+    static Gntr g = new Gntr();
+    double[] rate_table = { 0.1, 0.05, 0.05, 0.1, 0.1, 0.05, 0.05, 0.15, 0, 0, 0, 0.9 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await g.i();
+        e.hlqk_rate = 0;
+        Fuck(1, false, true, bubbles);
+    }
+
+    void SendMessage()
+    {
+        if (String.IsNullOrEmpty(input)) return;
+        bubbles.Add(new Bubble() { received = false, text = input });
+        Fuck(1 + (e.hlqk_rate > 0.4 ? rd.Next((int)Math.Floor((e.hlqk_rate - 0.4) * (rd.NextDouble() < 0.01 ? 10000 : 10))) : 0), rd.NextDouble() > 0.2 && rd.NextDouble() < e.hlqk_rate, true, bubbles);
+        e.hlqk_rate += e.hlqk_rate < 0.5 ? rate_table[rd.Next(rate_table.Length)] : rd.NextDouble() * 0.05;
+        input = "";
+    }
+    static void Fuck(int amount, bool hlqk, bool name, List<Bubble> b)
+    {
+        b.Add(new Bubble() { received = true, text = g.g(amount, hlqk, name) });
+    }
+}
