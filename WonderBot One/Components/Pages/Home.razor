@@ -1,46 +1,96 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
+<div class="dialog-top">
+    <span style="
+    margin-left: 10px;
+    font-size: 20px;
+    font-family:'Product Sans'
+">WonderBot One</span><span style="
+    font-size: 14px;
+    margin-left: 10px;
+    margin-top: 3px;
+    color: #555;
+">v1.0.0</span>
+</div>
 
-<div class="container mt-3 chat-box">
+<div class="container mt-3 chat-box" id="bubble-area">
     @foreach (var bubble in bubbles)
     {
         <div class="chat-bubble @(bubble.received ? "bubble-left" : "bubble-right")">@bubble.text</div>
     }
     
 </div>
-<div class="bottom-dialog">
+<div class="bottom-dialog" style="bottom: -60px;">
     <div class="input-group">
-        <input type="text" class="form-control" placeholder="输入消息..." @bind="input">
+        <input type="text" class="form-control" placeholder="跟我聊任何事情" @bind="input">
         <div class="input-group-append">
             <button class="btn btn-primary" type="button" @onclick="SendMessage">发送</button>
         </div>
     </div>
 </div>
+@if (firstVisit)
+{
+    <div class="full-screen-alert">
+        <div>🤣😂输入你的名字😂🤣</div>
+        <input type="text" class="form-control" placeholder="名字，这里" @bind="inputName">
+        <button class="btn btn-primary" type="button" @onclick="ConfirmName">确认</button>
+    </div>
+}
+
+<script>
+    function scrollToBottom(id) {
+        var e = document.getElementById(id);
+        e.scrollTop = e.scrollHeight;
+    }
+    function scrollDown() {
+        scrollToBottom("bubble-area");
+    }
+</script>
 
 @code {
     string input;
+    string inputName = "";
     List<Bubble> bubbles = new List<Bubble>();
     Env e = new Env();
     Random rd = new Random();
     static Gntr g = new Gntr();
     double[] rate_table = { 0.1, 0.05, 0.05, 0.1, 0.1, 0.05, 0.05, 0.15, 0, 0, 0, 0.9 };
+    bool firstVisit = false;
 
     protected override async Task OnInitializedAsync()
     {
+        firstVisit = await SecureStorage.GetAsync("character_name") == null;
         await g.i();
         e.hlqk_rate = 0;
-        Fuck(1, false, true, bubbles);
+        await Fuck(1, false, bubbles);
     }
 
-    void SendMessage()
+    async Task ConfirmName()
+    {
+        await SecureStorage.SetAsync("character_name", inputName);
+        firstVisit = false;
+    }
+
+    async Task SendMessage()
     {
         if (String.IsNullOrEmpty(input)) return;
         bubbles.Add(new Bubble() { received = false, text = input });
-        Fuck(1 + (e.hlqk_rate > 0.4 ? rd.Next((int)Math.Floor((e.hlqk_rate - 0.4) * (rd.NextDouble() < 0.01 ? 10000 : 10))) : 0), rd.NextDouble() > 0.2 && rd.NextDouble() < e.hlqk_rate, true, bubbles);
+        await Fuck(1 + (e.hlqk_rate > 0.4 ? rd.Next((int)Math.Floor((e.hlqk_rate - 0.4) * (rd.NextDouble() < 0.01 ? 10000 : 10))) : 0), rd.NextDouble() > 0.2 && rd.NextDouble() < e.hlqk_rate, bubbles);
         e.hlqk_rate += e.hlqk_rate < 0.5 ? rate_table[rd.Next(rate_table.Length)] : rd.NextDouble() * 0.05;
         input = "";
+        StateHasChanged();
+        await Task.Delay(20);
+        await JSRuntime.InvokeVoidAsync("scrollDown");
     }
-    static void Fuck(int amount, bool hlqk, bool name, List<Bubble> b)
+    async static Task Fuck(int amount, bool hlqk, List<Bubble> b)
     {
-        b.Add(new Bubble() { received = true, text = g.g(amount, hlqk, name) });
+        string name = await SecureStorage.GetAsync("character_name");
+        if (name == null){
+            b.Add(new Bubble() { received = true, text = g.g(amount, hlqk, "") });
+        }
+        else
+        {
+            b.Add(new Bubble() { received = true, text = g.g(amount, hlqk, name) });
+        }
     }
 }

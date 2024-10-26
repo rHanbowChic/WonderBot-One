@@ -1,10 +1,31 @@
 ﻿@inherits LayoutComponentBase
-
+@inject NavigationManager NavigationManager
 <div class="page">
-    
 
-    <main>
+
+	<main style="position: relative; margin-bottom: 60px;">
             @Body
 
     </main>
+    <div class="bottom-dialog" style="height: 60px;display:flex;align-items: center;justify-content:space-around;font-family:'Product Sans';">
+        <span style="
+    margin-left: 10px;
+    font-size: 20px;
+">WonderBot</span> <a @onclick="navChat" href="javascript:void(0);">CHAT</a> <a @onclick="navGntr" href="javascript:void(0);">GNTR</a> <a @onclick="navAbout" href="javascript:void(0);">...</a>
+    </div>
 </div>
+
+@code {
+    void navChat()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+    void navGntr()
+    {
+        NavigationManager.NavigateTo("/gntr");
+    }
+    void navAbout()
+    {
+        NavigationManager.NavigateTo("/about");
+    }
+}

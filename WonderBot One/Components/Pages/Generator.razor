@@ -1,0 +1,54 @@
+﻿@page "/gntr"
+
+<style>
+    .wrap1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 60px);
+        margin: 0;
+    }
+    .content {
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+    }
+</style>
+<div class="wrap1">
+    <div class="content">
+        <textarea @bind="t" @onclick="cpy" class="form-control mb-2" readonly style="height:100px"></textarea>
+        <div class="form-check" style="display: flex; justify-content: center">
+            <input class="form-check-input" type="checkbox" @bind="hlqk" />
+            <label class="form-check-label" for="defaultCheck1" style="margin-left: 5px;">
+                火力全开
+            </label>
+        </div>
+		<button class="btn btn-primary btn-block" @onclick="gn">给我一句</button>
+
+        
+    </div>
+</div>
+
+@code {
+    bool hlqk = false;
+    string t = "";
+    Random rd = new Random();
+    static Gntr g = new Gntr();
+    protected override async Task OnInitializedAsync()
+    {
+        await g.i();
+        t = g.g(1, hlqk, "");
+    }
+    async Task gn()
+    {
+        t = g.g(1, hlqk, "");
+    }
+    async Task cpy()
+    {
+        await Clipboard.Default.SetTextAsync(t);
+        var toast = Toast.Make("Copied!", ToastDuration.Short, 14);
+        CancellationTokenSource source = new CancellationTokenSource();
+        await toast.Show(source.Token);
+    }
+}
+

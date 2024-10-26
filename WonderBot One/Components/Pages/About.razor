@@ -1,0 +1,45 @@
+﻿@page "/about"
+
+<style>
+	.wrap1 {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: calc(100vh - 60px);
+		margin: 0;
+	}
+
+	.content {
+		text-align: center;
+		width: 100%;
+		max-width: 500px;
+	}
+	@("@")keyframes rainbow {
+            0% { color: red; }
+            14% { color: orange; }
+            28% { color: yellow; }
+            42% { color: green; }
+            57% { color: blue; }
+            71% { color: indigo; }
+            85% { color: violet; }
+            100% { color: red; }
+        }
+        .rainbow-text {
+			font-family: "Product Sans";
+            font-weight: bold;
+            animation: rainbow 0.3s linear infinite;
+        }
+</style>
+
+<div class="wrap1">
+    <div class="content">
+		<span class="rainbow-text">
+			<span style="font-size:20px;">By Eccccctt007777</span><br /><br /> TIPS: 点击文本框可以直接复制！
+		</span>
+		
+	</div>
+</div>
+
+@code {
+
+}

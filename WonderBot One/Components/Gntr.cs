@@ -23,7 +23,7 @@ namespace WonderBot_One.Components
         }
         public async Task i()
         {
-            var stream = await FileSystem.OpenAppPackageFileAsync("FoulestSwearList.txt");
+            var stream = await FileSystem.OpenAppPackageFileAsync("SwearList.txt");
             var reader = new StreamReader(stream);
             var contents = reader.ReadToEnd();
             l = contents.Split(new[] { "\ue2cd\uf854" }, StringSplitOptions.None).ToList();
@@ -32,7 +32,7 @@ namespace WonderBot_One.Components
             contents = reader.ReadToEnd();
             hlqk_l = contents.Split(new[] { "\ue2cd\uf854" }, StringSplitOptions.None).ToList();
         }
-        public string g(int amount = 1, bool hlqk = false, bool name = false)
+        public string g(int amount = 1, bool hlqk = false, string name = "")
         {
             string t = "";
             for (int i = 0; i < amount; i++)
@@ -40,7 +40,7 @@ namespace WonderBot_One.Components
                 t += hlqk ? A.a(hlqk_l[rd.Next(hlqk_l.Count)].Trim()) : A.a(l[rd.Next(l.Count)].Trim());
                 t += "\n";
             }
-            if (name)
+            if (!string.IsNullOrEmpty(name))
             {
                 /*t = t.Replace("你妈", "你"+ABUSE_OBJECT_MOM);
                 t = t.Replace("你🐴", "你"+ABUSE_OBJECT_MOM);
@@ -50,7 +50,7 @@ namespace WonderBot_One.Components
                 t = t.Replace("🐎", ABUSE_OBJECT_MOM);
                 t = t.Replace("母亲", ABUSE_OBJECT_MOM);
                 t = t.Replace("马", ABUSE_OBJECT_MOM);*/
-                t = t.Replace("你", ABUSE_OBJECT);
+                t = t.Replace("你", name);
             }
 
             return t;
